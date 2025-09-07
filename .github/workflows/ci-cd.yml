@@ -1,0 +1,63 @@
+name: WorkflowGenie MCP CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run linting
+      run: npm run lint
+      
+    - name: Run tests
+      run: npm test
+      env:
+        # Set minimal environment variables for tests
+        NODE_ENV: test
+        
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Deploy to Fly.io
+      uses: superfly/flyctl-actions/setup-flyctl@master
+      env:
+        FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      if: ${{ env.FLY_API_TOKEN != '' }}
+      run: flyctl deploy --remote-only
+      
+    - name: Create Smithery deployment notice
+      if: success()
+      run: |
+        echo "✅ Tests passed! Your code is ready to deploy to Smithery."
+        echo "To deploy to Smithery, run the following command locally:"
+        echo "npm run deploy:smithery"

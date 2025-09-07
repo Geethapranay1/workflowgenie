@@ -1,0 +1,26 @@
+version: 1
+buildCommand: npm install
+startCommand: node src/server.js
+envVarGroups:
+  - name: mcp-settings
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: LOG_LEVEL
+        value: info
+      - key: ENABLE_REQUEST_LOGGING
+        value: "true"
+  - name: api-secrets
+    envVars:
+      - key: CEQUENCE_API_KEY
+        generateValue: false
+      - key: CEQUENCE_BASE_URL
+        generateValue: false
+      - key: CEQUENCE_PROXY_ENDPOINT
+        generateValue: false
+      - key: DESCOPE_PROJECT_ID
+        generateValue: false
+      - key: DESCOPE_MANAGEMENT_KEY
+        generateValue: false

@@ -8,7 +8,7 @@ dotenv.config();
 const mockAttendees = [
   { name: 'John Developer', email: 'john@company.com' },
   { name: 'Jane Reviewer', email: 'jane@company.com' },
-  { name: 'Senior Dev', email: 'senior@company.com' }
+  
 ];
 
 const mockMeetingData = {

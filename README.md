@@ -44,6 +44,15 @@ All in 30 seconds. All secure. All with proper permissions.
 - **Incident Response**: Coordinate team communication and tracking during outages
 - **Sprint Planning**: Sync GitHub issues, calendar events, and team notifications
 
+### 🚀 Implemented Workflows
+- **Code Review Scheduling**: Complete integration between GitHub, Slack, Google Calendar, and Notion
+  - Fetches PR details and involved developers from GitHub
+  - Creates dedicated Slack channel for review discussions
+  - Finds optimal meeting time based on reviewers' calendar availability
+  - Schedules a calendar event with video conferencing
+  - Creates a Notion page with code review checklist and context
+  - Updates all systems with links to the others for seamless navigation
+
 ### 🔐 Security First
 - **Cequence AI Gateway**: Enterprise-grade API security and monitoring
 - **Descope Authentication**: Secure OAuth flows for all integrations

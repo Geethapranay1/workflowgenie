@@ -638,6 +638,76 @@ export class SlackConnector {
   }
 
   /**
+   * Send a generic message to a Slack channel
+   */
+  async sendMessage(channelId, messageData, userToken, requestId) {
+    const timer = createPerformanceTimer('slack_send_message');
+    
+    try {
+      const client = this.getClient(userToken);
+      
+      logger.debug('Sending message to Slack', {
+        requestId,
+        channelId
+      });
+
+      const messageOptions = {
+        channel: channelId,
+        text: messageData.text || "New message" // Fallback text
+      };
+      
+      // Add blocks if provided
+      if (messageData.blocks) {
+        messageOptions.blocks = messageData.blocks;
+      }
+      
+      // Add attachments if provided
+      if (messageData.attachments) {
+        messageOptions.attachments = messageData.attachments;
+      }
+      
+      // Set other options
+      if (messageData.thread_ts) {
+        messageOptions.thread_ts = messageData.thread_ts;
+      }
+      
+      if (messageData.mrkdwn !== undefined) {
+        messageOptions.mrkdwn = messageData.mrkdwn;
+      }
+      
+      if (messageData.unfurl_links !== undefined) {
+        messageOptions.unfurl_links = messageData.unfurl_links;
+      }
+
+      const result = await client.chat.postMessage(messageOptions);
+
+      logger.info('Message sent to Slack', {
+        requestId,
+        channelId,
+        messageTs: result.ts,
+        executionTime: timer.end()
+      });
+
+      return {
+        messageId: result.ts,
+        channel: channelId,
+        permalink: await this.getMessagePermalink(channelId, result.ts, userToken)
+      };
+
+    } catch (error) {
+      timer.end();
+      
+      logger.error('Failed to send message', {
+        requestId,
+        channelId,
+        error: error.message
+      });
+      
+      throw new Error(`Failed to send message: ${error.data?.error || error.message}`);
+    }
+  }
+
+  /**
    * Cleanup resources
    */
   async cleanup() {
